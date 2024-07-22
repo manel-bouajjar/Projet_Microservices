@@ -1,5 +1,6 @@
 package org.example.ms_facture.Service;
 
+import org.example.ms_facture.Client.ProduitClient;
 import org.example.ms_facture.DTO.ProduitDTO;
 import org.example.ms_facture.Entity.Facture;
 import org.example.ms_facture.Repository.FactureRepository;
@@ -18,6 +19,9 @@ public class FactureServiceImpl implements IFactureService {
     private FactureRepository factureRepository;
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private ProduitClient produitClient;
 
     @Value("${produit.service.url}")
     private String produitServiceUrl;
@@ -45,7 +49,10 @@ public class FactureServiceImpl implements IFactureService {
 
     @Override
     public ProduitDTO getProduitById(String id) {
-        String url = produitServiceUrl + "/produits/" + id;
-        return restTemplate.getForObject(url, ProduitDTO.class);
+        // Utilisation de RestTemplate (si nécessaire)
+        // String url = produitServiceUrl + "/produits/" + id;
+        // return restTemplate.getForObject(url, ProduitDTO.class);
+        // Utilisation de Feign Client
+        return produitClient.getProduitById(Long.parseLong(id));
     }
 }

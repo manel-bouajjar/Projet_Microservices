@@ -1,12 +1,13 @@
 package org.example.ms_facture.Controller;
 
+import org.example.ms_facture.Client.ProduitClient;
 import org.example.ms_facture.DTO.FactureDTO;
 import org.example.ms_facture.DTO.ProduitDTO;
 import org.example.ms_facture.Entity.Facture;
 import org.example.ms_facture.Service.IFactureService;
 import org.example.ms_facture.Mappers.FactureMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +23,8 @@ public class FactureController {
     @Autowired
     private FactureMapper factureMapper;
 
-    @Value("${produit.service.url}")
-    private String produitServiceUrl;
+    @Autowired
+    private ProduitClient produitClient; // Inject the Feign client
 
     @GetMapping
     public List<FactureDTO> getAllFactures() {
@@ -69,8 +70,8 @@ public class FactureController {
     }
 
     @GetMapping("/produit/{id}")
-    public ResponseEntity<ProduitDTO> getProduitById(@PathVariable String id) {
-        ProduitDTO produitDTO = factureService.getProduitById(id);
+    public ResponseEntity<ProduitDTO> getProduitById(@PathVariable Long id) { // Use Long if the id is a Long
+        ProduitDTO produitDTO = produitClient.getProduitById(id); // Use the Feign client to get the product
         if (produitDTO == null) {
             return ResponseEntity.notFound().build();
         }
