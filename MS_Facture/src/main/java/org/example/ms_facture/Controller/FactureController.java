@@ -4,6 +4,7 @@ import org.example.ms_facture.Client.ProduitClient;
 import org.example.ms_facture.DTO.FactureDTO;
 import org.example.ms_facture.DTO.ProduitDTO;
 import org.example.ms_facture.Entity.Facture;
+import org.example.ms_facture.Service.FactureProducerService;
 import org.example.ms_facture.Service.IFactureService;
 import org.example.ms_facture.Mappers.FactureMapper;
 
@@ -25,6 +26,9 @@ public class FactureController {
 
     @Autowired
     private ProduitClient produitClient; // Inject the Feign client
+
+    @Autowired
+    private FactureProducerService factureProducerService;
 
     @GetMapping
     public List<FactureDTO> getAllFactures() {
@@ -76,5 +80,12 @@ public class FactureController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(produitDTO);
+    }
+
+    // Envoie un message au service Kafka et retourne une réponse 200 OK.
+    @PostMapping("/send")
+    public ResponseEntity<Void> sendFactureMessage(@RequestBody String message) {
+        factureProducerService.sendMessage(message);
+        return ResponseEntity.ok().build();
     }
 }
